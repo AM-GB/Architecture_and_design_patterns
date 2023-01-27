@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block style %}
+	{% include "style.html" %}
+{% endblock %}
+{% block content %}
+	<div id="content">
+		<a href="/create-content/?id={{id}}">Создать новый контент</a>
+        <br>
+        <h1>Список контента для категории "{{name}}"</h1>
+
+		<table style="width:100%; border-spacing:0;">
+		<tr><th>Контент</th><th>Действие</th></tr>
+		{% for item in objects_list %}
+			<tr>
+				<td>{{item.name}}</td>
+				<td><span><a href="/copy-content/?name={{item.name}}">скопировать</a></span></td>
+			</tr>
+		{% endfor %}
+		</table>
+
+	</div>
+{% endblock %}

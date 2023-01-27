@@ -42,7 +42,6 @@ class Framework:
             view = self.routes_lst[path]
         else:
             view = PageNotFound404()
-        request = {}
         
         # filling the request dictionary with elements
         # all controllers will receive this dictionary
