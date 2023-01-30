@@ -17,6 +17,17 @@ context = {
     'objects_list': site.categories,
 }
 
+
+def menu_count(context=context):
+    count = 0
+    for k, i in context.items():
+        count = count + 1 if 'menu' in k else count
+    return count
+
+
+MENU_COUNT = menu_count()
+
+
 def menu_selected(context = {}, number_menu_tabs=0, menu_tab_number=0):
     for n in range(1, number_menu_tabs+1):
         selected = f'selected{n}'
@@ -29,30 +40,31 @@ def menu_selected(context = {}, number_menu_tabs=0, menu_tab_number=0):
 
 class Index:
     def __call__(self, request):
+        print(menu_count())
         context['list_categories'] = site.categories
         context['title'] = 'Домашняя'
-        menu_selected(context, 4, 1)
+        menu_selected(context, MENU_COUNT, 1)
         return '200 OK', render('index.html', context=context)
 
 
 class Examples:
     def __call__(self, request):
         context['title'] = 'Примеры'
-        menu_selected(context, 4, 2)
+        menu_selected(context, MENU_COUNT, 2)
         return '200 OK', render('examples.html', context=context)
 
 
 class Page:
     def __call__(self, request):
         context['title'] = 'Страница'
-        menu_selected(context, 4, 3)
+        menu_selected(context, MENU_COUNT, 3)
         return '200 OK', render('page.html', context=context)
 
 
 class Contact:
     def __call__(self, request):
         context['title'] = 'Контакты'
-        menu_selected(context, 4, 4)
+        menu_selected(context, MENU_COUNT, 4)
         print(context)
         return '200 OK', render('contact.html', context=context)
 
@@ -112,8 +124,8 @@ class CreateContent:
 
 class CreateCategory:
     def __call__(self, request):
-        context['list_categories'] = site.categories
-        context['title'] = ''
+        # context['list_categories'] = site.categories
+        context['title'] = 'Создание Категории'
 
         if request['request_method'] == 'POST':
             # метод пост
@@ -132,10 +144,11 @@ class CreateCategory:
             new_category = site.create_category(name, category)
 
             site.categories.append(new_category)
-
+            
+            context['title'] = 'Домашняя'
             return '200 OK', render('index.html', context=context)
         else:
-            categories = site.categories
+            context['title'] = 'Создание Категории'
             return '200 OK', render('create_category.html',
                                     context=context)
 

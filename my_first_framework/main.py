@@ -30,7 +30,7 @@ class Framework:
         if request_method == 'POST':
             data = PostRequests().get_request_params(environ)
             request['data'] = Framework.decode_value(data)
-            print(f"Нам пришёл post-запрос: {request['data']}")
+            print(f"Нам пришёл POST-запрос: {request['data']}")
         if request_method == 'GET':
             params = GetRequests().get_request_params(environ)
             request['params'] = Framework.decode_value(params)
