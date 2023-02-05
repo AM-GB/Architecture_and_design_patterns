@@ -14,13 +14,13 @@ def other_front(request):
 
 fronts = [secret_front, other_front]
 
-routes = {
-    '/': Index(),
-    '/exam/': Examples(),
-    '/page/': Page(),
-    '/contact/': Contact(),
-    '/content-list/': ContentList(),
-    '/create-content/': CreateContent(),
-    '/create-category/': CreateCategory(),
-    '/copy-content/': CopyContent(),
-}
+# routes = {
+#     '/': Index(),
+#     '/exam/': Examples(),
+#     '/page/': Page(),
+#     '/contact/': Contact(),
+#     '/content-list/': ContentList(),
+#     '/create-content/': CreateContent(),
+#     '/create-category/': CreateCategory(),
+#     '/copy-content/': CopyContent(),
+# }

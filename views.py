@@ -1,52 +1,29 @@
 from my_first_framework.templator import render
 
 from patterns.сreational_patterns import Engine, Logger
+from patterns.structural_patterns import AddUrl, Debug
+from common.utils import menu_count, menu_selected
+from common.config import CONTEXT
 
 site = Engine()
 logger = Logger('main')
 
-context = {
-    'title': '',
-    'logoname1': 'Свой',
-    'logoname2': 'сайт',
-    'logotext': 'Реализация сайта на своем wsgi-фреймворке',
-    'menu1': 'Домашняя',
-    'menu2': 'Примеры',
-    'menu3': 'Текст',
-    'menu4': 'Контакты',
-    'objects_list': site.categories,
-}
+context = CONTEXT
+context['objects_list'] = site.categories
 
+MENU_COUNT = menu_count(context=context)
 
-def menu_count(context=context):
-    count = 0
-    for k, i in context.items():
-        count = count + 1 if 'menu' in k else count
-    return count
-
-
-MENU_COUNT = menu_count()
-
-
-def menu_selected(context = {}, number_menu_tabs=0, menu_tab_number=0):
-    for n in range(1, number_menu_tabs+1):
-        selected = f'selected{n}'
-        if n == menu_tab_number:
-            context[selected] = 'selected'
-        else:
-            context[selected] = ''
-    return context
-
-
+@AddUrl(url='/')
 class Index:
+    @Debug(name='Index')
     def __call__(self, request):
-        print(menu_count())
         context['list_categories'] = site.categories
         context['title'] = 'Домашняя'
         menu_selected(context, MENU_COUNT, 1)
         return '200 OK', render('index.html', context=context)
 
 
+@AddUrl(url='/exam/')
 class Examples:
     def __call__(self, request):
         context['title'] = 'Примеры'
@@ -54,6 +31,7 @@ class Examples:
         return '200 OK', render('examples.html', context=context)
 
 
+@AddUrl(url='/page/')
 class Page:
     def __call__(self, request):
         context['title'] = 'Страница'
@@ -61,6 +39,7 @@ class Page:
         return '200 OK', render('page.html', context=context)
 
 
+@AddUrl(url='/contact/')
 class Contact:
     def __call__(self, request):
         context['title'] = 'Контакты'
@@ -69,6 +48,7 @@ class Contact:
         return '200 OK', render('contact.html', context=context)
 
 
+@AddUrl(url='/content-list/')
 class ContentList:
     def __call__(self, request):
         logger.log('list content')
@@ -85,6 +65,7 @@ class ContentList:
             return '200 OK', 'No content have been added yet'
 
 
+@AddUrl(url='/create-content/')
 class CreateContent:
     category_id = -1
 
@@ -122,6 +103,7 @@ class CreateContent:
                 return '200 OK', 'No categories have been added yet'
 
 
+@AddUrl(url='/create-category/')
 class CreateCategory:
     def __call__(self, request):
         # context['list_categories'] = site.categories
@@ -153,6 +135,7 @@ class CreateCategory:
                                     context=context)
 
 
+@AddUrl(url='/copy-content/')
 class CopyContent:
     def __call__(self, request):
         request_params = request['params']
