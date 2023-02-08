@@ -1,10 +1,12 @@
 from copy import deepcopy
 from quopri import decodestring
+from patterns.behavioral_patterns import FileWriter, Subject
 
 
 # abstract user
 class User:
-    pass
+    def __init__(self, name):
+        self.name = name
 
 
 # Admin
@@ -19,7 +21,9 @@ class ContentCreator(User):
 
 # content consumer
 class Customer(User):
-    pass
+    def __init__(self, name):
+        self. content = []
+        super().__init__(name)
 
 
 class UserFactory:
@@ -43,13 +47,23 @@ class ContentPrototype:
         return deepcopy(self)
 
 
-class Content(ContentPrototype):
+class Content(ContentPrototype, Subject):
 
     def __init__(self, name, category):
         self.name = name
         self.category = category
         self.category.content.append(self)
+        self.customers = []
+        super().__init__()
 
+    def __getitem__(self, item):
+        return self.customers[item]
+    
+    def add_customer(self, customer: Customer):
+        self.customers.append(customer)
+        customer.content.append(self)
+        self.notify()
+        
 
 # the first type of content
 class FirstTypeContent(Content):
@@ -96,7 +110,7 @@ class Engine:
     def __init__(self):
         self.admin = []
         self.content_creator = []
-        self.customer = []
+        self.customers = []
         self.content = []
         self.categories = []
 
@@ -124,6 +138,11 @@ class Engine:
             if item.name == name:
                 return item
         return None
+    
+    def get_customer(self, name) -> Customer:
+        for item in self.customers:
+            if item.name == name:
+                return item
 
     @staticmethod
     def decode_value(val):
@@ -154,9 +173,10 @@ class SingletonByName(type):
 
 class Logger(metaclass=SingletonByName):
 
-    def __init__(self, name):
+    def __init__(self, name, writer=FileWriter()):
         self.name = name
+        self.writer = writer
 
-    @staticmethod
-    def log(text):
-        print('log--->', text)
+    def log(self, text):
+        text = f'log---> {text}'
+        self.writer.write(text)
