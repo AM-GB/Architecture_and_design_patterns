@@ -2,6 +2,7 @@ from my_first_framework.templator import render
 
 from patterns.сreational_patterns import Engine, Logger
 from patterns.structural_patterns import AddUrl, Debug
+from patterns.behavioral_patterns import ListView, CreateView, BaseSerializer
 from common.utils import menu_count, menu_selected
 from common.config import CONTEXT
 
@@ -9,7 +10,7 @@ site = Engine()
 logger = Logger('main')
 
 context = CONTEXT
-context['objects_list'] = site.categories
+context['objects_list'] = []
 
 MENU_COUNT = menu_count(context=context)
 
@@ -103,7 +104,7 @@ class CreateContent:
                 return '200 OK', 'No categories have been added yet'
 
 
-@AddUrl(url='/create-category/')
+@AddUrl(url='/create_category/')
 class CreateCategory:
     def __call__(self, request):
         # context['list_categories'] = site.categories
@@ -155,3 +156,58 @@ class CopyContent:
                                     name=new_content.category.name)
         except KeyError:
             return '200 OK', 'No content have been added yet'
+
+
+@AddUrl(url='/customer_list/')
+class CustomerListView(ListView):
+    queryset = site.customers
+    template_name = 'customer_list.html'
+
+    def get_context_data(self):
+        menu_selected(context, MENU_COUNT, 1)
+        self.context = context
+        return super().get_context_data()
+
+
+@AddUrl(url='/create_customer/')
+class CustomerCreateView(CreateView):
+    template_name = 'create_customer.html'
+
+    def get_context_data(self):
+        return context
+
+    def create_obj(self, data: dict):
+        name = data['name']
+        name = site.decode_value(name)
+        new_obj = site.create_user('user', name)
+        site.customers.append(new_obj)
+        print(site.customers)
+
+
+@AddUrl(url='/add_customer/')
+class AddCustomerByContentCreateView(CreateView):
+    template_name = 'add_customer.html'
+    
+
+    def get_context_data(self):
+        self.context = {**super().get_context_data(), **context}
+        print(self.context)
+        self.context['content'] = site.content
+        self.context['customers'] = site.customers
+        return self.context
+
+    def create_obj(self, data: dict):
+        content_name = data['content_name']
+        content_name = site.decode_value(content_name)
+        content = site.get_content(content_name)
+        customer_name = data['customer_name']
+        customer_name = site.decode_value(customer_name)
+        customer = site.get_customer(customer_name)
+        content.add_customer(customer)
+
+
+@AddUrl(url='/api/')
+class CourseApi:
+    @Debug(name='CourseApi')
+    def __call__(self, request):
+        return '200 OK', BaseSerializer(site.courses).save()

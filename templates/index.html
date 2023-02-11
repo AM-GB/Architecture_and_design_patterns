@@ -6,18 +6,20 @@
 	<div id="content">
 		<!-- insert the page content here -->
 		<h1>Добро пожаловать на мой экспериментальный сайт</h1>
-		<a href="/create-category/">Создать новую категорию</a>
+		<a href="/create_category/">Создать новую категорию</a>
+		<p><a href="/create_customer/">Создать потребетеля контента</a></p>
 
 		<table style="width:100%; border-spacing:0;">
 		<tr><th>Категория</th><th>Контент</th></tr>
-		{% for item in context['objects_list'] %}
+		{% for item in context['list_categories'] %}
 			<tr>
 				<td>{{item.name}}</td><td><span>Количество контента: {{item.content_count()}}</span>
 				<a href="/content-list/?id={{item.id}}">Показать контент</a></td>
 			</tr>
 		{% endfor %}
 		</table>
-
+		
+		<p><a href="/customer_list/">Показать потребетеля контента</a></p>
 
 		<h2>Совместимость с браузером</h2>
 		<p>Этот шаблон был протестирован в следующих браузерах:</p>

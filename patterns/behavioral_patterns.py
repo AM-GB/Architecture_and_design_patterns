@@ -48,8 +48,11 @@ class BaseSerializer:
 class TemplateView:
     template_name = 'template.html'
 
+    def __init__(self):
+        self.context = {}
+
     def get_context_data(self):
-        return {}
+        return self.context
 
     def get_template(self):
         return self.template_name
@@ -57,7 +60,13 @@ class TemplateView:
     def render_template_with_context(self):
         template_name = self.get_template()
         context = self.get_context_data()
-        return '200 OK', render(template_name, **context)
+        # print(template_name)
+        # print('*'*50)
+        # print(context)
+        # print(context['objects_list'])
+        # for item in context['objects_list']:
+        #     print(item.name)
+        return '200 OK', render(template_name, context=context)
 
     def __call__(self, request):
         return self.render_template_with_context()
@@ -78,8 +87,9 @@ class ListView(TemplateView):
     def get_context_data(self):
         queryset = self.get_queryset()
         context_object_name = self.get_context_object_name()
-        context = {context_object_name: queryset}
-        return context
+        self.context[context_object_name] = queryset
+        print(self.context)
+        return self.context
 
 
 class CreateView(TemplateView):
@@ -93,7 +103,7 @@ class CreateView(TemplateView):
         pass
 
     def __call__(self, request):
-        if request['method'] == 'POST':
+        if request['request_method'] == 'POST':
             data = self.get_request_data(request)
             self.create_obj(data)
 

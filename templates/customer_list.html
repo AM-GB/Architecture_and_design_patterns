@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block style %}
+	{% include "style.html" %}
+{% endblock %}
+{% block content %}
+	<div id="content">
+		<!-- insert the page content here -->
+		<h1>Добро пожаловать на мой экспериментальный сайт</h1>
+		<a href="/create_customer/">Создать потребителя контента</a>
+        <p><a href="/add-customer/">Добавить пользователю доступ к контенту</a></p>
+
+
+		<table style="width:100%; border-spacing:0;">
+		<tr><th>Имя</th><th>Доступный контент</th></tr>
+		{% for item in context['objects_list'] %}
+			{{item.name}}
+			<tr>
+				<td>{{item.name}}</td>
+                <td>
+                    {% for content in item.contents %}
+                        {{content.name}}
+                    {% endfor %}
+                </td>
+			</tr>
+		{% endfor %}
+		</table>
+
+	</div>
+{% endblock %}
