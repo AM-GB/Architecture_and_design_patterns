@@ -191,7 +191,7 @@ class AddCustomerByContentCreateView(CreateView):
 
     def get_context_data(self):
         self.context = {**super().get_context_data(), **context}
-        print(self.context)
+        # print(self.context)
         self.context['content'] = site.content
         self.context['customers'] = site.customers
         return self.context
@@ -204,10 +204,12 @@ class AddCustomerByContentCreateView(CreateView):
         customer_name = site.decode_value(customer_name)
         customer = site.get_customer(customer_name)
         content.add_customer(customer)
+        # print(customer.content)
+        # print('*'*50)
 
 
 @AddUrl(url='/api/')
 class CourseApi:
-    @Debug(name='CourseApi')
+    @Debug(name='ContentApi')
     def __call__(self, request):
-        return '200 OK', BaseSerializer(site.courses).save()
+        return '200 OK', BaseSerializer(site.content).save()
