@@ -1,13 +1,16 @@
 from my_first_framework.templator import render
 
-from patterns.сreational_patterns import Engine, Logger
+from patterns.сreational_patterns import Engine, Logger, MapperRegistry
 from patterns.structural_patterns import AddUrl, Debug
 from patterns.behavioral_patterns import ListView, CreateView, BaseSerializer
+from patterns.architectural_system_pattern_unit_of_work import UnitOfWork
 from common.utils import menu_count, menu_selected
 from common.config import CONTEXT
 
 site = Engine()
 logger = Logger('main')
+UnitOfWork.new_current()
+UnitOfWork.get_current().set_mapper_registry(MapperRegistry)
 
 context = CONTEXT
 context['objects_list'] = []
@@ -163,6 +166,10 @@ class CustomerListView(ListView):
     queryset = site.customers
     template_name = 'customer_list.html'
 
+    def get_queryset(self):
+        mapper = MapperRegistry.get_current_mapper('customer')
+        return mapper.all()
+
     def get_context_data(self):
         menu_selected(context, MENU_COUNT, 1)
         self.context = context
@@ -181,7 +188,9 @@ class CustomerCreateView(CreateView):
         name = site.decode_value(name)
         new_obj = site.create_user('user', name)
         site.customers.append(new_obj)
-        print(site.customers)
+        new_obj.mark_new()
+        UnitOfWork.get_current().commit()
+        # print(site.customers)
 
 
 @AddUrl(url='/add_customer/')
