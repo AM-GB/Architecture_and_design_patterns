@@ -24,7 +24,7 @@ class ContentCreator(User):
 # content consumer
 class Customer(User, DomainObject):
     def __init__(self, name):
-        self. content = []
+        # self.content = []
         super().__init__(name)
 
 
@@ -63,7 +63,7 @@ class Content(ContentPrototype, Subject):
     
     def add_customer(self, customer: Customer):
         self.customers.append(customer)
-        customer.content.append(self)
+        # customer.content.append(self)
         self.notify()
         
 

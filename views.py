@@ -202,7 +202,8 @@ class AddCustomerByContentCreateView(CreateView):
         self.context = {**super().get_context_data(), **context}
         # print(self.context)
         self.context['content'] = site.content
-        self.context['customers'] = site.customers
+        mapper_customers = MapperRegistry.get_current_mapper('customer')
+        self.context['customers'] = mapper_customers.all()
         return self.context
 
     def create_obj(self, data: dict):
